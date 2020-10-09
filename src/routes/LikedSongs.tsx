@@ -6,26 +6,41 @@ const LikedSongs = () => {
   const [loading, setLoading] = React.useState(true)
   const [songs, setSongs] = React.useState([])
 
+  const getSongs = async () => {
+    const firstRequest = await makeRequest('/me/tracks', {
+      limit: 50,
+      offset: 0,
+    })
+    setSongs(songs => [
+      ...songs,
+      ...firstRequest.items.map(item => item.track.name),
+    ])
+    const total = firstRequest.total
+    if (total > 50) {
+      let requests = []
+      let current = 50
+      while (current <= total) {
+        requests.push(makeRequest('/me/tracks', { limit: 50, offset: current }))
+        current += 50
+      }
+      if (total % 50 != 0) {
+        requests.push(
+          makeRequest('/me/tracks', { limit: total % 50, offset: current })
+        )
+      }
+      let allData = await Promise.all(requests)
+      let songArray = []
+      for (let array of allData) {
+        setSongs(songs => [...songs, ...array.items.map(item => item.track.name)])
+      }
+      return allData
+    }
+  }
+
   React.useEffect(() => {
     const fetchData = async () => {
-      let total;
-      let current = 0;
-      do {
-        const data = await makeRequest('/me/tracks', {limit: 50, offset: current})
-        total = data.total;
-        console.log("making request")
-        let newSongs = data.items.map(item => item.track.name)
-        setSongs(songs => [...songs, ...newSongs])
-        current += 50
-      } while (current + 50 <= total)
-      if (total % 50 != 0) {
-        const data = await makeRequest('/me/tracks', {limit: total % 50, offset: current})
-        let newSongs = data.items.map(item => item.track.name)
-        setSongs(songs => [...songs, ...newSongs])
-      }
-
+      await getSongs()
       setLoading(false)
-      console.log(songs)
     }
     fetchData()
   }, [])
