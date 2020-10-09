@@ -1,0 +1,4 @@
+config.ts
+dist
+.cache
+node_modules
