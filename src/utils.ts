@@ -69,13 +69,9 @@ const getToken = async (code: string) => {
   localStorage.setItem('refresh', data.refresh_token)
 }
 
-const makeRequest = async (endpoint: string, paging?: pagingObject) => {
-  let queryString = ''
-  if (paging != undefined) {
-    queryString = `?limit=${paging.limit}&offset=${paging.offset}`
-  }
+const makeRequest = async (endpoint: string, params?: URLSearchParams) => {
   const urlBase = 'https://api.spotify.com/v1'
-  const request = await fetch(urlBase + endpoint + queryString, {
+  const request = await fetch(`${urlBase + endpoint}?${params.toString()}`, {
     headers: {
       Authorization: `Bearer ${localStorage.getItem('token')}`,
     },

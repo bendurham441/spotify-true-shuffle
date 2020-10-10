@@ -69,22 +69,37 @@ const LikedSongs = () => {
   const [queuedSongs, setQueuedSongs] = React.useState([])
 
   const getSongs = async () => {
-    const firstRequest = await makeRequest('/me/tracks', {
-      limit: 50,
-      offset: 0,
-    })
+    const firstRequest = await makeRequest(
+      '/me/tracks',
+      new URLSearchParams({
+        limit: '50',
+        offset: '0',
+      })
+    )
     setSongs(songs => [...songs, ...firstRequest.items.map(item => item.track)])
     const total = firstRequest.total
     if (total > 50) {
       let requests = []
       let current = 50
       while (current <= total) {
-        requests.push(makeRequest('/me/tracks', { limit: 50, offset: current }))
+        //requests.push(makeRequest('/m/tracks', new URLSearchParams()))
+        requests.push(
+          makeRequest(
+            '/me/tracks',
+            new URLSearchParams({ limit: '50', offset: current.toString() })
+          )
+        )
         current += 50
       }
       if (total % 50 != 0) {
         requests.push(
-          makeRequest('/me/tracks', { limit: total % 50, offset: current })
+          makeRequest(
+            '/me/tracks',
+            new URLSearchParams({
+              limit: (total % 50).toString(),
+              offset: current.toString(),
+            })
+          )
         )
       }
       let allData = await Promise.all(requests)
@@ -106,8 +121,7 @@ const LikedSongs = () => {
     console.log(songsToQueue)
   }
 
-  const addSongstoQueue = (songs: song[]) => {
-  }
+  const addSongstoQueue = (songs: song[]) => {}
 
   React.useEffect(() => {
     const fetchData = async () => {
