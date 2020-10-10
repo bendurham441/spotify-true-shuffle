@@ -1,8 +1,8 @@
 import * as React from 'react'
 import { Link } from 'react-router-dom'
-import { getToken, makeRequest } from '../utils'
+import { getToken } from '../utils'
 
-const Callback = () => {
+const Callback = (): React.FC => {
   React.useEffect(() => {
     const url = new URL(window.location.href)
     const code = url.searchParams.get('code')

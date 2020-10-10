@@ -1,5 +1,4 @@
 import * as React from 'react'
-import styled from 'styled-components'
 
 import {
   ContentContainer,
@@ -12,7 +11,7 @@ import {
 import { getCode } from '../utils'
 
 
-const Landing = () => (
+const Landing = (): React.FC => (
   <ContentContainer>
     <ContainerHeader>
       <MainHeading>True Shuffle</MainHeading>

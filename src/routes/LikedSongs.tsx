@@ -1,7 +1,7 @@
 import * as React from 'react'
 import styled from 'styled-components'
-import Song from '../components/Song'
-import SongList from '../components/SongList'
+
+import SongList, { Song } from '../components/SongList'
 import {
   ContainerContent,
   ContainerHeader,
@@ -9,7 +9,8 @@ import {
   MainHeading,
   SubTitle,
 } from '../StyleElements'
-import { makeRequest } from '../utils'
+
+import { makeRequest, Method } from '../utils'
 
 const TimeIntervalButton = styled.button`
   padding: 1em;
@@ -50,19 +51,28 @@ interface song {
 }
 
 const getTimeLengthSongs = (songs: song[]): number => {
-  let num = songs.reduce<number>(
+  return songs.reduce<number>(
     (total, item) => (total += item.duration_ms / 60000),
     0
   )
-  console.log(num)
-  return num
 }
 
 const getRandomInt = (bound: number): number => {
   return Math.floor(Math.random() * bound)
 }
 
-const LikedSongs = () => {
+const addSongsToQueue = (songs: Song[]): void => {
+  songs.forEach(async song => {
+    console.log(song.uri)
+    await makeRequest(
+      '/me/player/queue',
+      Method.POST,
+      new URLSearchParams({ uri: song.uri })
+    )
+  })
+}
+
+const LikedSongs = (): React.FC => {
   const [queueGenerated, setQueueGenerated] = React.useState(false)
   const [loading, setLoading] = React.useState(true)
   const [songs, setSongs] = React.useState([])
@@ -71,6 +81,7 @@ const LikedSongs = () => {
   const getSongs = async () => {
     const firstRequest = await makeRequest(
       '/me/tracks',
+      Method.GET,
       new URLSearchParams({
         limit: '50',
         offset: '0',
@@ -79,13 +90,14 @@ const LikedSongs = () => {
     setSongs(songs => [...songs, ...firstRequest.items.map(item => item.track)])
     const total = firstRequest.total
     if (total > 50) {
-      let requests = []
+      const requests = []
       let current = 50
       while (current <= total) {
         //requests.push(makeRequest('/m/tracks', new URLSearchParams()))
         requests.push(
           makeRequest(
             '/me/tracks',
+            Method.GET,
             new URLSearchParams({ limit: '50', offset: current.toString() })
           )
         )
@@ -95,6 +107,7 @@ const LikedSongs = () => {
         requests.push(
           makeRequest(
             '/me/tracks',
+            Method.GET,
             new URLSearchParams({
               limit: (total % 50).toString(),
               offset: current.toString(),
@@ -102,8 +115,8 @@ const LikedSongs = () => {
           )
         )
       }
-      let allData = await Promise.all(requests)
-      for (let array of allData) {
+      const allData = await Promise.all(requests)
+      for (const array of allData) {
         setSongs(songs => [...songs, ...array.items.map(item => item.track)])
       }
       return allData
@@ -113,15 +126,13 @@ const LikedSongs = () => {
   const generateShuffle = (time: number) => {
     let songsToQueue: song[] = []
     while (getTimeLengthSongs(songsToQueue) <= time) {
-      let songIndex = getRandomInt(songs.length)
+      const songIndex = getRandomInt(songs.length)
       songsToQueue = [...songsToQueue, songs[songIndex]]
     }
     setQueuedSongs(songsToQueue)
     setQueueGenerated(true)
     console.log(songsToQueue)
   }
-
-  const addSongstoQueue = (songs: song[]) => {}
 
   React.useEffect(() => {
     const fetchData = async () => {
@@ -159,7 +170,7 @@ const LikedSongs = () => {
             {queueGenerated && (
               <div>
                 <SongList songs={queuedSongs} />
-                <QueueButton>Add to Queue</QueueButton>
+                <QueueButton onClick={() => addSongsToQueue(queuedSongs)}>Add to Queue</QueueButton>
               </div>
             )}
           </div>

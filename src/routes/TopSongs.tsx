@@ -1,7 +1,7 @@
 import * as React from 'react'
-import { makeRequest, refresh } from '../utils'
+import { makeRequest } from '../utils'
 
-const TopSongs = () => {
+const TopSongs = (): React.FC => {
   const [loading, setLoading] = React.useState(true)
   const [data, setData] = React.useState({})
   React.useEffect(() => {

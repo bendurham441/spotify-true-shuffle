@@ -34,7 +34,7 @@ interface SongProps {
   artist: string
 }
 
-const Song = ({ name, imgUrl, artist }: SongProps) => {
+const Song = ({ name, imgUrl, artist }: SongProps) : React.FC => {
   return (
     <Card>
       <img src={imgUrl} />

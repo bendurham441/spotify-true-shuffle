@@ -1,8 +1,8 @@
 import { config } from '../config'
 
-interface pagingObject {
-  limit: number
-  offset: number
+export enum Method {
+  GET = 'Get',
+  POST = 'POST',
 }
 
 const genChallenge = async (verif: string) => {
@@ -41,7 +41,7 @@ const getCode = async () => {
     redirect_uri: config.REDIRECT_URI,
     code_challenge_method: 'S256',
     code_challenge: challenge,
-    scope: 'user-top-read user-library-read',
+    scope: 'user-top-read user-library-read user-modify-playback-state',
   })
 
   window.location.href = `${codeEndpoint}?${tokenParams}`
@@ -69,9 +69,14 @@ const getToken = async (code: string) => {
   localStorage.setItem('refresh', data.refresh_token)
 }
 
-const makeRequest = async (endpoint: string, params?: URLSearchParams) => {
+const makeRequest = async (
+  endpoint: string,
+  method?: Method,
+  params?: URLSearchParams
+) => {
   const urlBase = 'https://api.spotify.com/v1'
   const request = await fetch(`${urlBase + endpoint}?${params.toString()}`, {
+    method: method,
     headers: {
       Authorization: `Bearer ${localStorage.getItem('token')}`,
     },

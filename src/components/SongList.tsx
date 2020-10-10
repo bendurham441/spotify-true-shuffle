@@ -15,18 +15,19 @@ interface Artist {
   name: string
 }
 
-interface Song {
+export interface Song {
   name: string
   artists: Artist[]
   album: Album
   duration_ms: number
+  uri: string
 }
 
 interface SongListProps {
   songs: Song[]
 }
 
-const SongList = ({ songs }: SongListProps) => (
+const SongList = ({ songs }: SongListProps) : React.FC => (
   <div>
     <h2>Songs to Queue</h2>
     {songs.map(song => {
