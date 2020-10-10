@@ -9,6 +9,8 @@ import {
   SubTitle,
   CallToActionButton,
 } from '../StyleElements'
+import { getCode } from '../utils'
+
 
 const Landing = () => (
   <ContentContainer>
@@ -22,7 +24,7 @@ const Landing = () => (
         bothered me. Stop listening to the same songs over and over again now.
       </p>
     </ContainerContent>
-    <CallToActionButton>Start Shuffling Now</CallToActionButton>
+    <CallToActionButton onClick={() => getCode()}>Start Shuffling Now</CallToActionButton>
   </ContentContainer>
 )
 

@@ -13,7 +13,7 @@ const App = () => {
       <Router>
         <Switch>
           <Route exact path="/">
-            <Home />
+            <Landing />
           </Route>
           <Route path="/callback">
             <Callback />

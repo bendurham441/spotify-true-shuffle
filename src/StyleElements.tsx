@@ -38,7 +38,7 @@ export const ContainerContent = styled.div`
 export const SubTitle = styled.h2`
   font-size: 1.5rem;
   font-weight: 500;
-  margin: 0;
+  margin: 0.5em 0;
 `
 
 export const CallToActionButton = styled.button`
@@ -53,7 +53,7 @@ export const CallToActionButton = styled.button`
   color: white;
   font-weight: 700;
   font-size: 1.5rem;
-  top: -1rem;
+  top: -2rem;
   border: 0.2rem solid hsl(220, 50%, 50%);
   &:hover {
     background-color: white;
